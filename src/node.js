@@ -19,11 +19,34 @@ export const AlgoNode = (props) => {
   const { graph, node, data = {} } = props;
   const { label, status } = data;
 
+  graph.on('cell:mouseenter', ({ cell }) => {
+    cell.addTools(
+      [
+        {
+          name: 'button-remove',
+          args: { x: 10, y: 10 }
+        },
+      ],
+    )
+  })
 
+  graph.on('cell:mouseleave', ({ cell }) => {
+    if (cell.hasTool('button-remove')) {
+      cell.removeTool('button-remove');
+    }
+  })
 
-  
+  graph.on('cell:dblclick', ({ cell, e }) => {
+    const name = cell.isEdge() ? 'edge-editor' : 'node-editor';
 
-
+    cell.removeTool(name);
+    cell.addTools({
+      name: name,
+      args: {
+        event: e,
+      },
+    })
+  })
 
   return (
     <div className={`node ${status}`}>
